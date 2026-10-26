@@ -19,7 +19,9 @@ runtime process per game. The host uses Vulkan through MoltenVK and SDL3 for win
 
 ## Download
 
-Download the latest **Apple Silicon macOS** release from [GitHub Releases](../../releases/latest):
+[⬇️ Download the latest OpenS4ka macOS release](https://github.com/akimabs/opens4ka/releases/latest)
+
+Download the latest **Apple Silicon macOS** release:
 
 1. Download the `.dmg` file.
 2. Open it and drag `OpenS4ka.app` to `Applications`.

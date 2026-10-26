@@ -55,6 +55,11 @@ scripts/package-release.sh
 This writes a DMG, ZIP, and SHA-256 checksum for each in `dist/release/`. The release DMG contains
 `OpenS4ka.app` and an Applications shortcut. Keep `dist/` out of Git.
 
+> [!NOTE]
+> Release packaging must run in a non-sandboxed macOS shell. The Apple toolchain writes Swift/Metal module caches,
+> and the DMG step mounts a writable image and configures its Finder window. In an AI-agent environment, request an
+> escalated or non-sandboxed run for `scripts/package-release.sh` when a sandbox blocks those operations.
+
 ## Project layout
 
 ```text
@@ -158,6 +163,10 @@ For a local app build:
 For a clean release containing a DMG, ZIP, and SHA-256 checksums:
 
     scripts/package-release.sh
+
+Release packaging requires a non-sandboxed macOS shell. If the agent uses sandboxed command execution, request an
+escalated/non-sandboxed run for `scripts/package-release.sh` so Swift, Metal, CMake, and DMG/Finder operations can
+write their caches and mount the installer image.
 
 Start by checking the actual repository state. Do not assume that this prompt is newer than the files in the checkout.
 ```

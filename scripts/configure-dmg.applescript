@@ -9,24 +9,20 @@ on run argv
         open volumeAlias
         delay 1
 
-        tell front window
-            set current view to icon view
-            set toolbar visible to false
-            set statusbar visible to false
-            set bounds to {100, 100, 860, 580}
+        set current view of front window to icon view
+        set toolbar visible of front window to false
+        set statusbar visible of front window to false
+        set bounds of front window to {100, 100, 860, 580}
 
-            set viewOptions to icon view options
-            set arrangement of viewOptions to not arranged
-            set icon size of viewOptions to 108
-            set text size of viewOptions to 13
-            set background picture of viewOptions to backgroundAlias
+        set arrangement of icon view options of front window to not arranged
+        set icon size of icon view options of front window to 108
+        set text size of icon view options of front window to 13
+        set background picture of icon view options of front window to backgroundAlias
 
-            set position of item "OpenS4ka.app" to {190, 255}
-            set position of item "Applications" to {570, 255}
+        set position of item "OpenS4ka.app" of front window to {190, 255}
+        set position of item "Applications" of front window to {570, 255}
 
-            update without registering applications
-            delay 2
-            close
-        end tell
+        delay 2
+        close front window
     end tell
 end run
