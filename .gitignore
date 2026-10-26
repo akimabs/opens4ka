@@ -1,0 +1,25 @@
+# the user's own game files and what is made from them
+/assets/
+/generated/
+*.iso
+*.xbe
+
+# builds
+/.build/
+/dist/
+/runtime/build/
+/tools/build/
+/third_party/
+Sources/OpenS4kaMac/Resources/CRT.metallib
+
+# Swift Package Manager / Xcode local state
+/.swiftpm/
+**/xcuserdata/
+*.xcuserstate
+*.dSYM/
+
+# local
+.DS_Store
+__pycache__/
+/.vscode/
+/.idea/
