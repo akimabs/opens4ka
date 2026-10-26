@@ -8,7 +8,7 @@ struct OnboardingView: View {
     @ObservedObject var runtime: RuntimeController
     let onFinish: () -> Void
     @State private var step = 0
-    private let steps = ["Selamat datang", "Library game", "Stik", "Siap"]
+    private let steps = ["Welcome", "Game Library", "Controller", "Ready"]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -35,10 +35,10 @@ struct OnboardingView: View {
 
             HStack(spacing: 14) {
                 if step > 0 {
-                    Button("Kembali") { step -= 1 }.buttonStyle(ConsoleButtonStyle())
+                    Button("Back") { step -= 1 }.buttonStyle(ConsoleButtonStyle())
                 }
                 Spacer()
-                Text("✕ lanjut   ○ kembali").font(.system(size: 12)).foregroundStyle(.white.opacity(0.45))
+                Text("✕ next   ○ back").font(.system(size: 12)).foregroundStyle(.white.opacity(0.45))
                 Button(primaryLabel) { next() }
                     .buttonStyle(ConsoleButtonStyle())
                     .disabled(blocked)
@@ -62,9 +62,9 @@ struct OnboardingView: View {
 
     /// the controller is optional: without one the step is skipped, not completed
     private var primaryLabel: String {
-        if step == steps.count - 1 { return "Mulai main" }
-        if step == 2 && !runtime.controllerConnected { return "Lewati" }
-        return "Lanjut"
+        if step == steps.count - 1 { return "Start Playing" }
+        if step == 2 && !runtime.controllerConnected { return "Skip" }
+        return "Next"
     }
 
     /// the library step waits for a folder
@@ -91,39 +91,39 @@ struct OnboardingView: View {
     }
 
     private var welcomeText: some View {
-        header("OpenS4ka", "Game Xbox klasik yang di-recompile jadi aplikasi native Mac. Tanpa emulator: tiap game "
-               + "jalan langsung di Apple Silicon dengan Vulkan.")
+        header("OpenS4ka", "A native macOS launcher for recompiled classic Xbox games. No emulator: each game "
+               + "runs directly on Apple Silicon with Vulkan.")
     }
 
     private var libraryStep: some View {
         VStack(alignment: .leading, spacing: 22) {
-            header("Lokasi library", "Pilih atau buat folder untuk menyimpan game, boleh di drive eksternal.")
-            Text(library.hasChosenFolder ? library.gamesDirectory.path : "Belum dipilih")
+            header("Game Library", "Choose or create a folder for your games. An external drive works too.")
+            Text(library.hasChosenFolder ? library.gamesDirectory.path : "Not selected")
                 .font(.system(size: 14, design: .monospaced)).lineLimit(2)
                 .padding(16).frame(maxWidth: .infinity, alignment: .leading)
                 .background(.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 8))
-            Button("Pilih / buat folder") { library.chooseFolder() }.buttonStyle(ConsoleButtonStyle())
+            Button("Choose / Create Folder") { library.chooseFolder() }.buttonStyle(ConsoleButtonStyle())
         }
     }
 
     private var controllerStep: some View {
         VStack(alignment: .leading, spacing: 22) {
-            header("Hubungkan stik", "Opsional, bisa dilewati. DualShock 4 lewat Bluetooth atau kabel USB; stik lain yang "
-                   + "dikenali macOS juga bisa.")
+            header("Connect Controller", "Optional—you can skip this step. DualShock 4 works over Bluetooth or USB; "
+                   + "other macOS-supported controllers work too.")
             HStack(spacing: 12) {
                 Image(systemName: "gamecontroller.fill").font(.system(size: 22))
                 Text(runtime.controllerSummary).font(.system(size: 16))
                 Text(runtime.controllerConnected ? "Connected" : "Offline").font(.system(size: 13))
                     .foregroundStyle(runtime.controllerConnected ? .green : .orange)
             }
-            Text("1. Tahan SHARE + PS sampai lampu stik berkedip.\n2. Buka Bluetooth Mac, pilih Wireless Controller.\n"
-                 + "3. Setelah Connected, stik siap dipakai.")
+            Text("1. Hold SHARE + PS until the controller light starts blinking.\n2. Open Mac Bluetooth settings and "
+                 + "select Wireless Controller.\n3. Once connected, the controller is ready to use.")
                 .font(.system(size: 15)).lineSpacing(8).foregroundStyle(.white.opacity(0.8))
-            Button("Buka Bluetooth") { runtime.openBluetoothSettings() }.buttonStyle(ConsoleButtonStyle())
+            Button("Open Bluetooth Settings") { runtime.openBluetoothSettings() }.buttonStyle(ConsoleButtonStyle())
         }
     }
 
     private var doneStep: some View {
-        header("Siap main", "Lokasi library dan stik bisa diubah lagi di Settings.")
+        header("Ready to Play", "You can change the library location and controller later in Settings.")
     }
 }

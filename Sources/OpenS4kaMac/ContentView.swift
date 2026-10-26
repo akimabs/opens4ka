@@ -75,7 +75,7 @@ struct ContentView: View {
             }
         }
         .alert(errorTitle, isPresented: $showError) {
-            Button("Buka Settings") { selectedTab = .settings }
+            Button("Open Settings") { selectedTab = .settings }
             Button("OK", role: .cancel) {}
         } message: { Text(errorMessage) }
     }
@@ -85,19 +85,19 @@ struct ContentView: View {
         guard library.games.indices.contains(selectedGameIndex) else { return }
         let game = library.games[selectedGameIndex]
         guard let gameDirectory = library.directory(for: game) else {
-            presentError("Game belum ter-mount", message: library.mountError(for: game))
+            presentError("Game Not Found", message: library.mountError(for: game))
             return
         }
         guard game.nativeRuntimeAvailable else {
-            presentError("Runtime belum tersedia", message: "ISO \(game.title) sudah terdaftar di library, tetapi native runtime-nya belum dipasang di app ini.")
+            presentError("Runtime Unavailable", message: "The ISO for \(game.title) is listed in the library, but its native runtime is not installed in this app.")
             return
         }
         guard runtime.isAvailable(for: game.runtimeName) else {
-            presentError("Runtime belum tersedia", message: "Runtime Xbox native untuk \(game.title) belum terpasang di app ini.")
+            presentError("Runtime Unavailable", message: "The native Xbox runtime for \(game.title) is not installed in this app.")
             return
         }
         if !runtime.play(gameDirectory: gameDirectory, gameTitle: game.title, runtimeName: game.runtimeName) {
-            presentError("Game gagal dibuka", message: runtime.status)
+            presentError("Failed to Open Game", message: runtime.status)
         }
     }
 

@@ -8,9 +8,9 @@ import OpenS4kaRuntime
 final class RuntimeController: ObservableObject {
     enum LauncherAction { case games, settings, play, back, up, down, left, right }
     let launcherActions = PassthroughSubject<LauncherAction, Never>()
-    @Published private(set) var status = "Runtime macOS belum dipasang"
+    @Published private(set) var status = "macOS runtime not installed"
     @Published private(set) var controllerConnected = false
-    @Published private(set) var controllerName = "Stik belum terhubung"
+    @Published private(set) var controllerName = "No controller connected"
     @Published private(set) var controllerKind = "CONTROLLER"
     @Published var unlockCharacters: Bool {
         didSet { UserDefaults.standard.set(unlockCharacters, forKey: "opens4ka.unlockCharacters") }
@@ -84,7 +84,7 @@ final class RuntimeController: ObservableObject {
     }
 
     var controllerSummary: String {
-        controllerConnected ? "\(controllerKind) · \(controllerName)" : "STIK BELUM TERHUBUNG"
+        controllerConnected ? "\(controllerKind) · \(controllerName)" : "NO CONTROLLER CONNECTED"
     }
 
     var aspectRatioLabel: String {
@@ -117,7 +117,7 @@ final class RuntimeController: ObservableObject {
 
     func refresh() {
         refreshController()
-        status = isAvailable ? "Xbox native runtime siap" : "Xbox native runtime belum dipasang"
+        status = isAvailable ? "Xbox native runtime ready" : "Xbox native runtime not installed"
     }
 
     @discardableResult
@@ -134,7 +134,7 @@ final class RuntimeController: ObservableObject {
         }
         if started {
             gameRunning = true
-            status = "\(gameTitle) sedang berjalan"
+            status = "\(gameTitle) is running"
             // The native runtime owns the gameplay window. Hide the launcher
             // so it cannot remain visually on top while the child activates.
             NSApp.hide(nil)
@@ -152,7 +152,7 @@ final class RuntimeController: ObservableObject {
         NSApp.unhide(nil)
         NSApp.activate(ignoringOtherApps: true)
         let error = String(cString: opens4ka_runtime_last_error())
-        status = error.isEmpty ? "Game berhenti" : error
+        status = error.isEmpty ? "Game stopped" : error
     }
 
     func stop() {
@@ -189,7 +189,7 @@ final class RuntimeController: ObservableObject {
         let controllers = GCController.controllers()
         guard let controller = controllers.first(where: isDualShock4) ?? controllers.first else {
             controllerConnected = false
-            controllerName = "Stik belum terhubung"
+            controllerName = "No controller connected"
             controllerKind = "CONTROLLER"
             return
         }

@@ -88,23 +88,23 @@ extern "C" int opens4ka_runtime_available_for_game(const char* runtime_name) {
 
 int StartRuntime(const char* game_directory, const char* runtime_name, const RuntimeOptions* options) {
     if (g_child > 0) {
-        Error("Game sedang berjalan.");
+        Error("Game is already running.");
         return 0;
     }
     if (!game_directory || !*game_directory) {
-        Error("Folder game belum dipilih.");
+        Error("A game folder has not been selected.");
         return 0;
     }
 
     fs::path game = game_directory;
     if (!fs::is_directory(game) || !HasGameImage(game)) {
-        Error("ISO atau default.xbe belum ditemukan di folder game.");
+        Error("No ISO or default.xbe was found in the game folder.");
         return 0;
     }
 
     fs::path executable = RuntimeExecutable(runtime_name);
     if (!fs::is_regular_file(executable)) {
-        Error("Runtime Xbox macOS belum dipasang untuk game ini.");
+        Error("The Xbox macOS runtime is not installed for this game.");
         return 0;
     }
 
@@ -136,7 +136,7 @@ int StartRuntime(const char* game_directory, const char* runtime_name, const Run
     pid_t child = -1;
     int result = posix_spawn(&child, executable_string.c_str(), nullptr, nullptr, argv.data(), environ);
     if (result != 0) {
-        Error("Runtime gagal dijalankan: " + std::string(std::strerror(result)));
+        Error("Failed to start runtime: " + std::string(std::strerror(result)));
         return 0;
     }
     g_child = child;
@@ -174,7 +174,7 @@ extern "C" int opens4ka_runtime_poll(void) {
     pid_t result = waitpid(g_child, &status, WNOHANG);
     if (result == 0) return 1;
     if (result < 0) {
-        Error("Runtime berhenti: " + std::string(std::strerror(errno)));
+        Error("Runtime stopped: " + std::string(std::strerror(errno)));
         g_child = -1;
         return 0;
     }
@@ -182,7 +182,7 @@ extern "C" int opens4ka_runtime_poll(void) {
     g_child = -1;
     if (WIFEXITED(status)) {
         int code = WEXITSTATUS(status);
-        if (code != 0) Error("Runtime berhenti (exit code " + std::to_string(code) + "). Cek Runtime/logs.");
+        if (code != 0) Error("Runtime stopped (exit code " + std::to_string(code) + "). Check Runtime/logs.");
     } else if (WIFSIGNALED(status)) {
         Error("Runtime crash (signal " + std::to_string(WTERMSIG(status)) + "). Cek Runtime/logs.");
     }

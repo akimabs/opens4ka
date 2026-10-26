@@ -5,9 +5,9 @@ private enum SettingsCategory: String, CaseIterable {
     case cheats = "Cheat"
     case filter = "Filter"
     case antialiasing = "Anti-aliasing"
-    case display = "Tampilan"
+    case display = "Display"
     case controller = "Input"
-    case library = "Folder game"
+    case library = "Game Library"
 }
 
 struct SettingsHome: View {
@@ -61,8 +61,8 @@ struct SettingsHome: View {
                     .clipped()
             }
             .frame(width: viewport.size.width, height: contentHeight, alignment: .topLeading)
-            Text(capturing != nil ? "Tekan tombol keyboard untuk aksi ini     ○  Batal"
-                 : inDetail ? "↑ ↓  Pilih opsi     ×  Terapkan     ○  Kembali ke daftar" : "↑ ↓  Pilih kategori     ×  Buka     ○  Games")
+            Text(capturing != nil ? "Press a key for this action     ○  Cancel"
+                 : inDetail ? "↑ ↓  Select option     ×  Apply     ○  Back to list" : "↑ ↓  Select category     ×  Open     ○  Games")
                 .font(.system(size: 12)).foregroundStyle(.white.opacity(0.6))
                 .frame(height: 16, alignment: .leading)
             }
@@ -106,27 +106,27 @@ struct SettingsHome: View {
         switch category {
         case .cheats:
             // one card per game; only Mortal Kombat has cheats so far
-            section("Mortal Kombat: Shaolin Monks") { choiceDetail(title: "Buka semua karakter", description: "Semua karakter bisa dipilih di character select. Berlaku saat game dibuka berikutnya.",
+            section("Mortal Kombat: Shaolin Monks") { choiceDetail(title: "Unlock all characters", description: "Unlocks every character in character select. Applies the next time the game is launched.",
                          selection: Binding(get: { runtime.unlockCharacters ? 1 : 0 }, set: { runtime.unlockCharacters = $0 == 1 }),
                          values: [(0, "Off"), (1, "On")]) }
         case .filter:
-            section("Gameplay") { choiceDetail(title: "Filter layar", description: "Pilih tampilan gameplay. CRT memberi efek scanline dan warna TV jadul. Efek CRT pada launcher selalu aktif.",
+            section("Gameplay") { choiceDetail(title: "Screen filter", description: "Choose a gameplay display filter. CRT adds scanlines and a retro TV color effect. The launcher always uses its own CRT effect.",
                          selection: $runtime.screenFilter,
                          values: [(0, "Off"), (1, "Sharpen"), (2, "Vivid"), (3, "Scanlines"), (4, "CRT")]) }
         case .antialiasing:
-            section("Kualitas") { choiceDetail(title: "Anti-aliasing", description: "Haluskan tepi objek saat bermain. SSAA 2× membutuhkan lebih banyak daya GPU. Berlaku saat game dibuka berikutnya.",
+            section("Quality") { choiceDetail(title: "Anti-aliasing", description: "Smooth object edges during gameplay. SSAA 2× uses more GPU power. Applies the next time the game is launched.",
                          selection: $runtime.antiAliasing, values: [(0, "Off"), (1, "FXAA"), (2, "SSAA 2×")]) }
         case .display:
             VStack(alignment: .leading, spacing: 18) {
-                section("Layar") { displayDetail }
-                section("Kamera") {
+                section("Display") { displayDetail }
+                section("Camera") {
                 Button {
                     runtime.ultrawide.toggle()
                     focusedOption = 5
                     inDetail = true
                 } label: {
                     HStack {
-                        Text("Kamera ultrawide")
+                        Text("Ultrawide camera")
                         Spacer()
                         Text(runtime.ultrawide ? "On" : "Off")
                     }
@@ -144,11 +144,11 @@ struct SettingsHome: View {
                         Text(runtime.controllerConnected ? "Connected" : "Offline")
                             .font(.system(size: 13)).foregroundStyle(runtime.controllerConnected ? .green : .orange)
                     }
-                    Text("DualSense atau DualShock 4: tahan Create/Share + PS sampai lampu berkedip, lalu pilih di "
-                         + "Bluetooth Mac. Kabel USB juga bisa.")
+                    Text("DualSense or DualShock 4: hold Create/Share + PS until the light blinks, then select it in "
+                         + "your Mac's Bluetooth settings. USB also works.")
                         .font(.system(size: 14)).lineSpacing(6).foregroundStyle(.white.opacity(0.7))
                         .fixedSize(horizontal: false, vertical: true)
-                    actionButton("Buka Bluetooth", index: 0, action: runtime.openBluetoothSettings)
+                    actionButton("Open Bluetooth Settings", index: 0, action: runtime.openBluetoothSettings)
                     Divider().overlay(.white.opacity(0.12))
                     Button {
                         runtime.playstationPrompts.toggle()
@@ -158,7 +158,7 @@ struct SettingsHome: View {
                         HStack {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Use PS2 button").font(.system(size: 17))
-                                Text("Ikon tombol di game jadi ✕ ○ □ △ dan L1/R1/L2/R2")
+                                Text("In-game button prompts use ✕ ○ □ △ and L1/R1/L2/R2")
                                     .font(.system(size: 12)).foregroundStyle(.white.opacity(0.55))
                             }
                             Spacer()
@@ -170,16 +170,16 @@ struct SettingsHome: View {
                         .overlay(RoundedRectangle(cornerRadius: 3).stroke(.white.opacity(inDetail && focusedOption == 1 ? 0.8 : 0), lineWidth: 1.5))
                         .consoleScrollTarget(1)
                 }
-                section("Keyboard", note: "Pilih aksi lalu tekan tombol baru. Tombol yang sudah dipakai aksi lain ditukar. "
-                        + "Mouse menggerakkan kamera.") {
+                section("Keyboard", note: "Choose an action, then press a new key. Keys already assigned to another action are swapped. "
+                        + "The mouse controls the camera.") {
                     keyboardMap
-                    actionButton("Reset ke default", index: 2 + KeyBindings.actions.count, action: runtime.resetKeys)
+                    actionButton("Reset to Defaults", index: 2 + KeyBindings.actions.count, action: runtime.resetKeys)
                         .padding(.top, 6)
                 }
             }
         case .library:
             VStack(alignment: .leading, spacing: 18) {
-                section("Lokasi library", note: "Satu folder untuk semua game. Simpan tiap ISO di subfolder game masing-masing, atau pilih folder yang langsung berisi satu ISO.") {
+                section("Game Library", note: "One folder for all games. Store each ISO in its own game subfolder, or choose a folder containing a single ISO directly.") {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(library.gamesDirectory.path)
                         .font(.system(size: 14, design: .monospaced)).lineLimit(3)
@@ -188,15 +188,15 @@ struct SettingsHome: View {
                 .padding(16).frame(maxWidth: .infinity, alignment: .leading)
                 .background(.black.opacity(0.3), in: RoundedRectangle(cornerRadius: 6))
                 HStack(spacing: 14) {
-                    actionButton("Pilih folder", index: 0, action: library.chooseFolder)
-                    actionButton("Scan ulang", index: 1, action: library.refresh)
-                    actionButton("Buka di Finder", index: 2, action: library.openFolder).disabled(!library.folderAvailable)
+                    actionButton("Choose Folder", index: 0, action: library.chooseFolder)
+                    actionButton("Rescan", index: 1, action: library.refresh)
+                    actionButton("Open in Finder", index: 2, action: library.openFolder).disabled(!library.folderAvailable)
                 }
-                Text("Game dibaca langsung dari folder ini. Folder atau drive yang terputus akan menampilkan error saat Play.")
+                Text("Games are read directly from this folder. A disconnected folder or drive will show an error when you press Play.")
                     .font(.system(size: 13)).foregroundStyle(.white.opacity(0.5)).lineSpacing(5)
                 }
                 section("Onboarding") {
-                    actionButton("Ulangi onboarding", index: 3) { UserDefaults.standard.set(false, forKey: "opens4ka.onboarded") }
+                    actionButton("Restart Onboarding", index: 3) { UserDefaults.standard.set(false, forKey: "opens4ka.onboarded") }
                 }
             }
         }
@@ -212,7 +212,7 @@ struct SettingsHome: View {
                     HStack {
                         Text(runtime.playstationPrompts ? action.playstation : action.xbox).font(.system(size: 15))
                         Spacer()
-                        Text(capturing == action.id ? "Tekan tombol…" : KeyBindings.label(runtime.keyBindings[action.id] ?? ""))
+                        Text(capturing == action.id ? "Press a key…" : KeyBindings.label(runtime.keyBindings[action.id] ?? ""))
                             .font(.system(size: 14, design: .monospaced))
                             .foregroundStyle(capturing == action.id ? Color.accentColor : .white.opacity(0.85))
                     }
@@ -290,7 +290,7 @@ struct SettingsHome: View {
     private var displayDetail: some View {
         HStack(alignment: .top, spacing: 28) {
             VStack(alignment: .leading, spacing: 16) {
-                detailHeader("Aspect ratio", description: "Atur lebar layar game. Kamera ultrawide memperluas pandangan; HUD tetap dalam area 4:3.")
+                detailHeader("Aspect ratio", description: "Adjust the game screen width. The ultrawide camera expands the view; the HUD stays within the 4:3 area.")
                 DisplayPreview(aspectRatio: runtime.aspectRatio, ultrawide: runtime.ultrawide)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -437,7 +437,7 @@ private struct DisplayPreview: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Preview ukuran layar game")
+            Text("Game screen preview")
                 .font(.system(size: 18, weight: .medium))
             VStack(alignment: .leading, spacing: 12) {
                 GeometryReader { geometry in
@@ -487,12 +487,12 @@ private struct DisplayPreview: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(aspectLabel)
                         .font(.system(size: 22, weight: .semibold))
-                    Text(aspectRatio == 0 ? "Game memenuhi layar penuh." : "Area hitam menunjukkan letterbox.")
+                    Text(aspectRatio == 0 ? "The game fills the entire screen." : "Black areas show letterboxing.")
                         .font(.system(size: 14))
                         .foregroundStyle(.white.opacity(0.68))
                         .fixedSize(horizontal: false, vertical: true)
                     if ultrawide && (selectedRatio ?? 16.0 / 9.0) > 4.0 / 3.0 {
-                        Text("Garis putus-putus = area HUD 4:3")
+                        Text("Dotted outline = 4:3 HUD area")
                             .font(.system(size: 12))
                             .foregroundStyle(.white.opacity(0.52))
                     }

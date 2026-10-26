@@ -78,12 +78,12 @@ final class GameLibrary: ObservableObject {
 
     func mountError(for game: Game) -> String {
         if !hasChosenFolder {
-            return "Folder library belum dipilih. Pilih di Settings → Folder game."
+            return "A game library folder has not been selected. Choose one in Settings → Game Library."
         }
         if !folderAvailable {
-            return "Folder game tidak tersedia. Sambungkan drive atau pilih folder di Settings.\n\n\(gamesDirectory.path)"
+            return "The game folder is unavailable. Connect the drive or choose a folder in Settings.\n\n\(gamesDirectory.path)"
         }
-        return "\(game.title) belum ditemukan. Taruh ISO Xbox atau folder hasil ekstraknya di folder library, lalu scan ulang.\n\n\(gamesDirectory.path)"
+        return "\(game.title) was not found. Put an Xbox ISO or extracted game folder in the library, then rescan.\n\n\(gamesDirectory.path)"
     }
 
     func refresh() {
@@ -98,8 +98,8 @@ final class GameLibrary: ObservableObject {
             : [:]
         mountedDirectories = mounted
         mountedGameDirectory = mounted[mortalKombat.id]
-        message = !hasChosenFolder ? "Belum ada folder library"
-            : hasGame ? "\(mounted.count) game ditemukan" : (folderAvailable ? "Game belum ditemukan" : "Folder tidak tersedia")
+        message = !hasChosenFolder ? "No game library folder selected"
+            : hasGame ? "\(mounted.count) game(s) found" : (folderAvailable ? "No games found" : "Folder unavailable")
     }
 
     func openFolder() {
@@ -109,9 +109,9 @@ final class GameLibrary: ObservableObject {
 
     func chooseFolder() {
         let panel = NSOpenPanel()
-        panel.title = "Pilih folder library OpenS4ka"
-        panel.message = "Satu folder untuk semua game. Simpan tiap ISO di subfolder game masing-masing."
-        panel.prompt = "Gunakan folder"
+        panel.title = "Choose OpenS4ka Game Library Folder"
+        panel.message = "One folder for all games. Store each ISO in its own game subfolder."
+        panel.prompt = "Use Folder"
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.canCreateDirectories = true
